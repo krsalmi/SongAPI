@@ -6,5 +6,5 @@ docker-machine start SongAPI
 IP=$(docker-machine ip SongAPI)
 eval $(docker-machine env SongAPI)
 docker-compose up -d
-ADDR="http://${IP}:5000/init_db"
+ADDR="http://${IP}:5000"
 open ${ADDR}

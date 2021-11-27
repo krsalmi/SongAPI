@@ -8,7 +8,6 @@ class SingleSong(BaseModel):
 	level: float
 	rating = []
 	released: str
-	song_id: int
 	title: str
 
 	def to_bson(self):

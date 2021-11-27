@@ -4,7 +4,8 @@ import json
 from models.validate_schema import cmd
 import sys
 
-from song_model import SongModel
+from models.song_model import SongModel
+from models.custom_error import CustomError
 
 
 PER_PAGE = 10
@@ -77,33 +78,21 @@ def get_all_songs_paginated(page=None):
 			mimetype='application/json')
 
 #B
-@app.route('/get_difficulty_level', methods=["GET", "POST"])
+@app.route('/get_difficulty_level', methods=["GET"])
 def get_difficulty_level():
 	db = SongModel()
-	if request.method == "POST":
-		level = request.args.get('level')
+	level = request.args.get('level')
+	if level:
 		collected_list = db.get_level(level)
-		if isinstance(collected_list, list):
-			if len(collected_list) == 0:
-				return Response(response=jsonify("No songs matching the searched level"),
-				status=200,
-				mimetype='application/json')
-			return Response(response=jsonify(collected_list),
+		if isinstance(collected_list, CustomError):
+			return jsonify(collected_list.message)
+		else:
+			return Response(response=json.dumps(collected_list),
 					status=200,
 					mimetype='application/json')
-		else:
-			return jsonify("Error, level entered not valid")
 	else:
 		ret = db.get_difficulty()
-		try:
-			rating = ret["rating"]
-		except:
-			return jsonify("Error, no song with searched for 'song_id' found")
-		if not rating:
-			return jsonify("Searched for song has no ratings yet")
-		rating.sort()
-		ave = sum(rating) / len(rating)
-		return Response(response=jsonify({"average": ave, "highest": rating[-1], "lowest": rating[0]}),
+		return Response(json.dumps(ret),
 				status=200,
 				mimetype='application/json')
 
@@ -119,7 +108,7 @@ def handle_search():
 		return Response(response=jsonify("No matches found"),
 				status=200,
 				mimetype='application/json')
-	return Response(response=jsonify(ret),
+	return Response(response=json.dumps(ret),
 				status=200,
 				mimetype='application/json')
 
@@ -143,7 +132,15 @@ def get_song_rating():
 	db = SongModel()
 	song_id = request.args.get('song_id')
 	ret = db.get_ratings(song_id)
-	return Response(json.dumps(ret),
+	try:
+			rating = ret["rating"]
+	except:
+		return jsonify("Error, no song with searched for 'song_id' found")
+	if not rating:
+		return jsonify("Searched for song has no ratings yet")
+	rating.sort()
+	ave = sum(rating) / len(rating)
+	return Response(response=jsonify({"average": ave, "highest": rating[-1], "lowest": rating[0]}),
 			status=200,
 			mimetype='application/json')
 
