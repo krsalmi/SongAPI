@@ -6,10 +6,6 @@ import json
 import sys
 from models.single_song import SingleSong
 
-app = Flask(__name__)
-
-
-
 
 class SongModel():
 	def __init__(self):
@@ -22,13 +18,12 @@ class SongModel():
 			db = client["song_db"]
 			return db
 		self.db = get_db()
-		self.id = 1
 	
 	def init_db(self, file):
 		db = self.db
 		db.songs.drop()
 		db.create_collection("songs")
-		#open file and create json object from each line adding "song_id" and "rating" fields
+		self.id = 1
 		f = open(file)
 		for line in f:
 			ret = self.post(line)
@@ -57,10 +52,6 @@ class SongModel():
 			return jsonify("Error, not valid level")
 		collected_level = db.songs.find({"level": level},{"_id": False})
 		collected_list = self.cursor_object_to_list(collected_level)
-		# if len(collected_list) == 0:
-		# 	return Response(response=jsonify("No songs matching the searched level"),
-		# 	status=200,
-		# 	mimetype='application/json')
 		return collected_list
 
 	def get_difficulty(self):
@@ -98,25 +89,20 @@ class SongModel():
 			return jsonify("Error, parameter 'song_id' missing")
 		song_id = int(song_id)
 		ret = db.songs.find_one({'song_id': song_id}, {'rating':1, '_id': False})
-		try:
-			rating = ret["rating"]
-		except:
-			return jsonify("Error, no song with searched for 'song_id' found")
-		else:
-			if not rating:
-				return jsonify("Searched for song has no ratings yet")
-			rating.sort()
-			ave = sum(rating) / len(rating)
-			return jsonify({"average": ave, "highest": rating[-1], "lowest": rating[0]})
+		return ret
 
+		
 	def post(self, line):
-		db = get_db()
+		db = self.db
+		if not line:
+			return ("Error, input missing")
+		line["song_id"] = self.id
 		try:
-			singleSong = SingleSong(line, self.id)
+			song = SingleSong(**line)
 		except:
-			return jsonify("Error while model checking")
+			print("Error while model checking! ", sys.exc_info())
+		db.songs.insert_one(song.to_bson())
 		self.id += 1
-		db.songs.insert_one(singleSong.make_json)
 
 	def put_rating(self, song_id, rating):
 		db = self.db
@@ -135,18 +121,3 @@ class SongModel():
 			# in which 'updatedExisting' is False
 			return jsonify(ret)
 
-
-
-class Index(Resource):
-	def get(self):
-		return redirect(url_for("students"))
-
-
-api = Api(app)
-api.add_resource(Index, "/", endpoint="index")
-api.add_resource(Student, "/api", endpoint="students")
-api.add_resource(Student, "/api/<string:registration>", endpoint="registration")
-api.add_resource(Student, "/api/department/<string:department>", endpoint="department")
-
-if __name__ == "__main__":
-    app.run(debug=True)

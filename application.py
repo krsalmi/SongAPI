@@ -94,8 +94,16 @@ def get_difficulty_level():
 		else:
 			return jsonify("Error, level entered not valid")
 	else:
-		diff_response = db.get_difficulty()
-		return Response(response=jsonify(diff_response),
+		ret = db.get_difficulty()
+		try:
+			rating = ret["rating"]
+		except:
+			return jsonify("Error, no song with searched for 'song_id' found")
+		if not rating:
+			return jsonify("Searched for song has no ratings yet")
+		rating.sort()
+		ave = sum(rating) / len(rating)
+		return Response(response=jsonify({"average": ave, "highest": rating[-1], "lowest": rating[0]}),
 				status=200,
 				mimetype='application/json')
 

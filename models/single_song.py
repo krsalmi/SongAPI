@@ -1,20 +1,18 @@
-from flask import jsonify
+from pydantic import BaseModel, Field
 import json
+from typing import List, Optional, Union
 
-class SingleSong:
-	def __init__(self, line, id):
-		if not line:
-			return jsonify("Error, input needed")
-		line = json.loads(line)
-		self.artist = line["artist"]
-		self.difficulty = float(line["difficulty"])
-		self.level = float(line["level"])
-		self.rating = []
-		self.released = line["released"]
-		self.song_id = int(id)
-		self.title = line["title"]
-	
-	def make_json(self):
-		song_dict = {self.artist, self.difficulty, self.level,
-		self.rating, self.released, self.song_id, self.title}
-		return jsonify(song_dict)
+class SingleSong(BaseModel):
+	artist: str
+	difficulty: float
+	level: float
+	rating = []
+	released: str
+	song_id: int
+	title: str
+
+	def to_bson(self):
+			song = self.dict(by_alias=True, exclude_none=True)
+			return song
+
+		
