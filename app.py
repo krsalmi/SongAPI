@@ -197,7 +197,7 @@ def handle_search():
 
 
 #D
-@app.route('/add_song_rating', methods=["PUT"])
+@app.route('/add_song_rating', methods=["GET"])
 def add_rating():
 	db = get_db()
 	song_id = request.args.get('song_id')

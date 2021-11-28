@@ -6,6 +6,7 @@ services:
       - "5000:5000"
     depends_on:
       - db
+    container_name: flask
   db:
     image: mongo:latest
     hostname: test_mongodb
@@ -15,3 +16,4 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=pass
     ports:
       - 27017:27017
+    container_name: mongo

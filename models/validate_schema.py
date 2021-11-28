@@ -21,7 +21,7 @@ validator = {"$jsonSchema":{
 				"bsonType": [ "array" ],
 				"description": "array of given ratings",
 				"items": {
-					"bsonType": ["int"],
+					"bsonType": ["double"],
 					"minimum": 1,
 					"maximum": 5
 				},
