@@ -23,7 +23,7 @@ def test_get_all_songs_invalid_1():
 	WHEN the '/get_all_songs' page is posted to (POST)
 	THEN check that response is what it should be
 	"""
-	response = app.test_client().post('/get_all_songs', data={'per':"dog"})
+	response = app.test_client().post('/get_all_songs', data=json.dumps({'per':"dog"}), content_type='application/json')
 	data = json.loads(response.get_data(as_text=True))
 	message = "Error, not a number per which to paginate results"
 	assert response.status_code == 400
@@ -64,10 +64,10 @@ def test_add_rating_invalid_1():
 	GIVEN a Flask application is running
 	and pytest is run inside the 'flask' container
 	WHEN the '/add_song_rating' page receives a
-	valid PUT request for a document that doesn't exist
+	valid POST request for a document that doesn't exist
 	THEN check that response is valid
 	"""
-	response = app.test_client().put('/add_song_rating', data={'song_id':30000,'rating':3})
+	response = app.test_client().post('/add_song_rating', data=json.dumps({'song_id':30000,'rating':3}), content_type='application/json')
 	data = json.loads(response.get_data(as_text=True))
 	message = "No such document to update"
 	assert response.status_code == 404
@@ -78,10 +78,10 @@ def test_add_rating_invalid_2():
 	GIVEN a Flask application is running
 	and pytest is run inside the 'flask' container
 	WHEN the '/add_song_rating' page receives a
-	invalid PUT request (rating must be between 1 and 5)
+	invalid POST request (rating must be between 1 and 5)
 	THEN check that response is valid
 	"""
-	response = app.test_client().put('/add_song_rating', data={'song_id':1,'rating':0})
+	response = app.test_client().post('/add_song_rating', data=json.dumps({'song_id':1,'rating':6}), content_type='application/json')
 	data = json.loads(response.get_data(as_text=True))
 	message = "Error, raiting must be between 1 and 5 inclusive."
 	assert response.status_code == 400

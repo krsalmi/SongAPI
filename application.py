@@ -39,7 +39,8 @@ def get_all_songs():
 		songs = db.get_all()
 		return jsonify(songs)
 	else:
-		per = request.form.get("per")
+		req = request.get_json()
+		per = req["per"]
 		if per != None and per != '0':
 			try:
 				per = int(per)
@@ -49,6 +50,8 @@ def get_all_songs():
 			PER_PAGE = per
 			message = "Pagination 'per page' number updated, request pages from '/get_all_songs/<pagenum>'"
 			return jsonify(message), 201
+		else:
+			return CustomError(400, "Error, 'per' field missing").give_response()
 
 # A Pagination
 # All song results are divided into sections according to the PER_PAGE macro
@@ -66,7 +69,7 @@ def get_all_songs_paginated(page=None):
 		res = collected[page - 1]
 		return jsonify(res)
 	except:
-		return CustomError(404, "Error, results on that page").give_response()
+		return CustomError(404, "Error, no results on that page").give_response()
 
 # B
 # Returns the average difficulty for all songs when receiving a GET request with no 'level' parameter.
@@ -109,11 +112,12 @@ def handle_search():
 # Takes required parameters "song_id" and "rating", if not received, or if
 # parameters are invalid, or no document is found matching the 'song_id',
 # returns an error response.
-@app.route('/add_song_rating', methods=["PUT"])
+@app.route('/add_song_rating', methods=["POST"])
 def add_rating():
 	db = DataBase()
-	song_id = request.form.get('song_id')
-	rating = request.form.get('rating')
+	req = request.get_json()
+	song_id = req['song_id']
+	rating = req['rating']
 	if not song_id or not rating:
 		return CustomError(400, "Error, 'song_id' and 'rating' fields missing").give_response()
 	try:
@@ -123,9 +127,9 @@ def add_rating():
 		return CustomError(400, "Error, not valid inputs for 'song_id' and 'rating'").give_response()
 	if not (1 <= rating <= 5):
 			return CustomError(400, "Error, raiting must be between 1 and 5 inclusive.").give_response()
-	ret = db.put_rating(song_id, rating)
+	ret = db.post_rating(song_id, rating)
 	if ret.modified_count == 1:
-		return jsonify(),204
+		return jsonify("Rating added to song with searched for 'song_id'")
 	else:
 		return CustomError(404, "No such document to update").give_response()
 

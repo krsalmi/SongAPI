@@ -78,7 +78,7 @@ class DataBase():
 		out2.close()
 		return out_list
 	#D
-	def put_rating(self, song_id, rating):
+	def post_rating(self, song_id, rating):
 		db = self.db
 		ret = db.songs.update_one(
 			{'song_id' : song_id},

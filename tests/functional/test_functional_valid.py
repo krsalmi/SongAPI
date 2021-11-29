@@ -71,7 +71,7 @@ def test_get_all_songs_valid_2():
 	WHEN the '/get_all_songs' page is posted to (POST)
 	THEN check that response is valid
 	"""
-	response = app.test_client().post('/get_all_songs', data={'per':2})
+	response = app.test_client().post('/get_all_songs', data=json.dumps({'per':2}), content_type='application/json')
 	data = json.loads(response.get_data(as_text=True))
 	message = "Pagination 'per page' number updated, request pages from '/get_all_songs/<pagenum>'"
 	assert response.status_code == 201
@@ -147,11 +147,12 @@ def test_add_rating_valid():
 	GIVEN a Flask application is running
 	and pytest is run inside the 'flask' container
 	WHEN the '/add_song_rating' page receives a
-	valid PUT request
+	valid POST request
 	THEN check that response is valid
 	"""
-	response = app.test_client().put('/add_song_rating', data={'song_id':1,'rating':1})
-	assert response.status_code == 204
+	response = app.test_client().post('/add_song_rating', 
+		data=json.dumps({'song_id':1,'rating':1}), content_type='application/json')
+	assert response.status_code == 200
 
 def test_get_song_rating_valid():
 	"""
