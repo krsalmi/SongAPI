@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify
 from models.database import DataBase
 from models.custom_error import CustomError
-import json
 
 
 PER_PAGE = 10
@@ -9,6 +8,7 @@ FILE = "/code/songs.json"
 
 app = Flask(__name__)
 
+#Database is initialized before first request from file: songs.json.
 @app.before_first_request
 def setup_database():
 	db = DataBase()
@@ -21,7 +21,6 @@ def setup_database():
 	f.close()
 	return jsonify("Database built successfully"),201
 
-
 @app.route('/', methods=["GET"])
 def welcome():
 	message = ("Welcome to the song database! The database has been built from 'songs.json', "
@@ -29,9 +28,10 @@ def welcome():
 	"'/search_songs', '/add_song_rating' and '/get_song_rating'.")
 	return jsonify(message)
 
-
 #A
-# Displays all songs in the database
+# Returns a list of songs with the data provided by the "songs.json".
+# If POST request, the PER_PAGE macro (which is initially 10) is set
+# to whatever is received from the 'per' parameter.
 @app.route('/get_all_songs', methods=["GET", "POST"])
 def get_all_songs():
 	db = DataBase()
@@ -50,6 +50,11 @@ def get_all_songs():
 			message = "Pagination 'per page' number updated, request pages from '/get_all_songs/<pagenum>'"
 			return jsonify(message), 201
 
+# A Pagination
+# All song results are divided into sections according to the PER_PAGE macro
+# and the section requested (according to the page number) is returned.
+# If page number number is invalid or no results are left to showcase on that
+# page, an error message is returned.
 @app.route('/get_all_songs/<int:page>', methods=["GET"])
 def get_all_songs_paginated(page=None):
 	db = DataBase()
@@ -63,7 +68,10 @@ def get_all_songs_paginated(page=None):
 	except:
 		return CustomError(404, "Error, results on that page").give_response()
 
-#B
+# B
+# Returns the average difficulty for all songs when receiving a GET request with no 'level' parameter.
+# When 'level' parameter is entered, returns a filtered collection of results according to the level.
+# Returns an error message if no songs match the requested level.
 @app.route('/get_difficulty_level', methods=["GET"])
 def get_difficulty_level():
 	db = DataBase()
@@ -80,7 +88,10 @@ def get_difficulty_level():
 
 
 
-#C
+# C
+ # Returns a list of songs matching the search string which is entered with the
+ # parameter 'message'. If no results were found, or parameter message wasn't
+ # entered, returns an error response.
 @app.route('/search_songs', methods=["GET"])
 def handle_search():
 	message = request.args.get('message')
@@ -93,7 +104,11 @@ def handle_search():
 	return jsonify(ret)
 
 
-#D
+# D
+# Adds a rating for the given song when receiving a PUT request.
+# Takes required parameters "song_id" and "rating", if not received, or if
+# parameters are invalid, or no document is found matching the 'song_id',
+# returns an error response.
 @app.route('/add_song_rating', methods=["PUT"])
 def add_rating():
 	db = DataBase()
@@ -115,6 +130,9 @@ def add_rating():
 		return CustomError(404, "No such document to update").give_response()
 
 #E
+# Returns the average, the lowest and the highest rating of the given 'song_id'.
+# If song_id is not valid, or song with 'song_id' has no ratings yet,
+# returns an error response.
 @app.route('/get_song_rating', methods=["GET"])
 def get_song_rating():
 	db = DataBase()

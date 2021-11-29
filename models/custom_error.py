@@ -1,6 +1,7 @@
 from flask import Response
 import json
 
+# Class to return custom error responses
 class CustomError:
 	def __init__(self, code, message):
 		self.message = message
