@@ -1,7 +1,5 @@
-# syntax=docker/dockerfile:1
 FROM python:3.7-alpine
 WORKDIR /code
-#change this back
 ENV FLASK_APP=application.py
 ENV FLASK_RUN_HOST=0.0.0.0
 COPY requirements.txt requirements.txt

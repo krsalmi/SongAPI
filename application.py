@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, make_response, Response
+from flask import Flask, request, jsonify
 from models.database import DataBase
 from models.custom_error import CustomError
 import json
