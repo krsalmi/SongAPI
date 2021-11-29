@@ -3,8 +3,8 @@
 This is a small-scale api that runs on Flask with a MongoDB database, both parts being Dockerized.
 
 ## Prerequisites
-`docker` and `docker-compose`   
-If `docker` must be run in a Virtual Machine (like I had to do as a Mac user with no access to the Docker desktop app) `docker-machine` and VirtualBox is also required.
+DOCKER! with the commands `docker` and `docker-compose`   
+If `docker` must be run in a Virtual Machine (like I had to do as a Mac user with no access to the Docker desktop app) `docker-machine` and VirtualBox are also required.
 
 ## Files, folders and their content
 The *Dockerfile*, *docker-compose.yml* and *requirements.txt* can be found the root of this project. Also at the root is the actual app itself, titled *application.py* and the provided input file *songs.json*.   
@@ -23,17 +23,17 @@ This script doesn't do much, it simply performs `docker-compose up -d` and opens
 To run the tests, the dockerized app must be running. In the root of the project, run `bash tests/run_tests_WITH_VM.sh` or `bash tests/run_tests_NO_VM.sh` depending on your situation. Running a script will perform `pytest` on all the tests in the *tests* folder.   
 
 ### The tests
-There are two folders in the *tests* folder, one is *unit* for testing the SongModel class with valid and invalid inputs. The *functional* folder on the other hand, has tests that are for testing the different *routes* of the app. Testing here is done with the help of flask *test_client()* which mimicks real requests. There are valid and invalid functional tests, files are named accordingly.
+There are two folders in the *tests* folder, one is *unit* for testing the SongModel class with valid and invalid inputs. The *functional* folder on the other hand, has tests that are for testing the different *routes* of the app. Testing here is done with the help of flask *test_client()* which mimics real requests. There are valid and invalid functional tests, files are named accordingly.
 
 ## Other testing
 While testing the api in other ways, be it via Postman or VScode Rest Client for example, the POST requests require the input be of type *application/json*.   
 
-GET requests with additional parameters, such as for */get_difficulty_level* for receiving songs of a certain level, *search_songs* for searching for a particular string, or */get_song_rating* for receiving info on the ratings of a particular song, the parameter(s) should be entered direclty to end of the address.
+GET requests with additional parameters, such as for */get_difficulty_level* for receiving songs of a certain level, *search_songs* for searching for a particular string, or */get_song_rating* for receiving info on the ratings of a particular song, the parameter(s) should be entered directly to end of the address.
 For example, GET *{localhost or VM IP}:5000/get_song_rating?song_id=1*  
 
 ## How the APP works
 ### Before the first request
-When the app is started, before the first request, the database is initialized. All communication with the mongo database happens via the *DataBase* class which can be found in *models*. This class will form a connection (albeit with not very secure usernames and password) to mongodb and save the connection to *self.db*. In this *setup_database()* function (and in the *init_db()* it calls), the datase connection is formed, any existing *songs_db* table will be dropped and a new one is created. This is why any time the app is restarted, the database is reinitialized. The FILE, which is set to point to the 'songs.json' file, is opened and the lines are processed and posted into the database.
+When the app is started before the first request, the database is initialized. All communication with the mongo database happens via the *DataBase* class which can be found in *models*. This class will form a connection (albeit with not very secure usernames and password) to mongodb and save the connection to *self.db*. In the *setup_database()* function (and in the *init_db()* it calls), the datase connection is formed, any existing *songs_db* table will be dropped and a new one is created. This is why any time the app is restarted, the database is reinitialized. The FILE, which is set to point to the 'songs.json' file, is opened and the lines are processed and posted into the database.
 
 ### The different routes
 #### /get_all_songs   (A)
