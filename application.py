@@ -116,15 +116,13 @@ def handle_search():
 def add_rating():
 	db = DataBase()
 	req = request.get_json()
-	song_id = req['song_id']
-	rating = req['rating']
-	if not song_id or not rating:
-		return CustomError(400, "Error, 'song_id' and 'rating' fields missing").give_response()
 	try:
+		song_id = req['song_id']
+		rating = req['rating']
 		song_id = int(song_id)
 		rating = float(rating)
 	except:
-		return CustomError(400, "Error, not valid inputs for 'song_id' and 'rating'").give_response()
+		return CustomError(400, "Error, not valid inputs for 'song_id' and 'rating' or fields are missing").give_response()
 	if not (1 <= rating <= 5):
 			return CustomError(400, "Error, raiting must be between 1 and 5 inclusive.").give_response()
 	ret = db.post_rating(song_id, rating)
