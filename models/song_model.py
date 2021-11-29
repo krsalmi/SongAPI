@@ -1,6 +1,5 @@
 from pydantic import BaseModel, Field
-import json
-from typing import List, Optional, Union
+# from typing import List, Optional, Union
 
 class SongModel(BaseModel):
 	artist: str

@@ -1,6 +1,7 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, make_response, Response
 from models.database import DataBase
 from models.custom_error import CustomError
+import json
 
 
 PER_PAGE = 10
@@ -18,7 +19,7 @@ def setup_database():
 		if type(ret) == CustomError:
 			return ret.give_response()
 	f.close()
-	return jsonify("Database built successfully"), 201
+	return jsonify("Database built successfully"),201
 
 
 @app.route('/', methods=["GET"])
@@ -46,7 +47,8 @@ def get_all_songs():
 				return CustomError(400, "Error, not a number per which to paginate results").give_response()
 			global PER_PAGE
 			PER_PAGE = per
-			return jsonify("Pagination 'per page' number updated, request pages from '/get_all_songs/<pagenum>'"), 201
+			message = "Pagination 'per page' number updated, request pages from '/get_all_songs/<pagenum>'"
+			return jsonify(message), 201
 
 @app.route('/get_all_songs/<int:page>', methods=["GET"])
 def get_all_songs_paginated(page=None):
@@ -107,9 +109,10 @@ def add_rating():
 	if not (1 <= rating <= 5):
 			return CustomError(400, "Error, raiting must be between 1 and 5 inclusive.").give_response()
 	ret = db.put_rating(song_id, rating)
-		# even if song w id was not found, update still returns a WriteObject, \
-		# in which 'updatedExisting' is False
-	return jsonify(ret), 204
+	if ret.modified_count == 1:
+		return jsonify(),204
+	else:
+		return CustomError(404, "No such document to update").give_response()
 
 #E
 @app.route('/get_song_rating', methods=["GET"])

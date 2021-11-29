@@ -1,6 +1,6 @@
 import sys
 # sys.path.append('/../models')
-sys.path.append('../models')
+sys.path.append('/code/models')
 import song_model
 
 SongModel = song_model.SongModel
@@ -45,17 +45,3 @@ def test_song_model_valid2():
 	line["rating"] = []
 	assert type(bson_output) == dict
 	assert bson_output == line
-
-def test_song_model_invalid1():
-	
-	#invalid input, missing "title"
-	line = {"artist": "Madonna","difficulty": 100,"level":13,"released": "2015-10-26"}
-	song = SongModel(**line)
-
-def test_song_model_invalid2():
-	
-	#invalid input, difficulty should be float
-	line = {"artist": "Madonna", "title": "Frozen","difficulty": "hard","level":13,"released": "2015-10-26"}
-	song = SongModel(**line)
-
-

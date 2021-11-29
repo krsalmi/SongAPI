@@ -101,7 +101,7 @@ class DataBase():
 
 	def put_rating(self, song_id, rating):
 		db = self.db
-		ret = db.songs.update(
+		ret = db.songs.update_one(
 			{'song_id' : song_id},
 			{ '$push': { 'rating': rating}}
 		)

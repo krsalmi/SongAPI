@@ -9,3 +9,4 @@ class CustomError:
 		return Response(response=json.dumps(self.message),
 					status=self.code,
 					mimetype='application/json')
+
