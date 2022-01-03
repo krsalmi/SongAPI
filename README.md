@@ -54,6 +54,11 @@ This route adds a rating to a song. The route only accepts POST requests (which 
 #### /get_song_rating    (E)
 /get_song_rating returns the average, highest and lowest rating for a searched for 'song_id'. The route works with GET requests and, just like with other GET requests that take input, the parameter must be added to the end of the address. For example, a GET request to */get_song_rating?song_id=1* gives rating results for the song with id number 1.
 
-## ...With more time I would
-Test the api with input of a huge scale. I didn't have time to do this, but I have hope that it could work. Working with docker from a VirtualMachine was a pain, because it takes up so space and I didn't have enough space to download additional programs that would have helped the testing process (Postman, for example). Also, I would have liked to be able to test out this project in a different kind of environment than the one I'm using, for example without needing to have a Virtual Machine and being able to use docker directly.   
-On the other hand, on some level I maybe had too much time which I used to excessively error check inputs etc and the code got a lot longer with all the *if* statements
+## Development ideas and encountered problems
+-As is, this API doesn't scale well. The problem is the 'ratings' field, which at the moment is a list. A better implementation would have been to make the 'ratings' its own table.  
+-During pagination (via /get_all_songs), a global variable is updated, which won't work well with multiple processes. This could be improved multiple ways,
+for example by receiving the 'per' parameter via GET and saving it in a local variable.  
+-Type hinting missing! Adding type hinting to the functions would make it faster for the reader of the code to grasp the function's intention and usage.  
+-Currently the backend doesn't have configuration options and security is poor (mongodb user/password are not complicated enough and they are not hidden).  
+-Working with docker from a VirtualMachine was a pain, because it takes up so space and I didn't have enough space to download additional programs that would have helped the testing process (Postman, for example). Also, I would have liked to be able to test out this project in a different kind of environment than the one I'm using, for example without needing to have a Virtual Machine and being able to use docker directly.   
+On the other hand, on some level I maybe had too much time which I used to excessively error check inputs etc. and the code got a lot longer with all the *if* statements

@@ -23,11 +23,10 @@ def setup_database():
 
 @app.route('/', methods=["GET"])
 def welcome():
-	return render_template("index.html")
-	# message = ("Welcome to the song database! The database has been built from 'songs.json', "
-	# "from the entries that passed the model check. Available routes are: '/get_all_songs', '/get_difficulty_level', "
-	# "'/search_songs', '/add_song_rating' and '/get_song_rating'.")
-	# return jsonify(message)
+	message = ("Welcome to the song database! The database has been built from 'songs.json', "
+	"from the entries that passed the model check. Available routes are: '/get_all_songs', '/get_difficulty_level', "
+	"'/search_songs', '/add_song_rating' and '/get_song_rating'.")
+	return jsonify(message)
 
 #A
 # Returns a list of songs with the data provided by the "songs.json".

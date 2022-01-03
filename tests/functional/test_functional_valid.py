@@ -127,12 +127,12 @@ def test_search_songs_valid_1():
 	THEN check that response is valid and list of songs fitting 
 	searched message are returned
 	"""
-	response = app.test_client().get('/search_songs?message=you')
+	response = app.test_client().get('/search_songs?message=night')
 	data = json.loads(response.get_data(as_text=True))
 	lines = test_helper.get_lines()
 	collected = []
 	for line in lines:
-		if "you" in line["title"].lower() or "you" in line["artist"].lower():
+		if "night" in line["title"].lower() or "night" in line["artist"].lower():
 			collected.append(line)
 	assert response.status_code == 200
 	i = 0
