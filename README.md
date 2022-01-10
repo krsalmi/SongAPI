@@ -36,22 +36,22 @@ For example, GET *{localhost or VM IP}:5000/get_song_rating?song_id=1*
 When the app is started before the first request, the database is initialized. All communication with the mongo database happens via the *DataBase* class which can be found in *models*. This class will form a connection (albeit with not very secure usernames and password) to mongodb and save the connection to *self.db*. In the *setup_database()* function (and in the *init_db()* it calls), the datase connection is formed, any existing *songs_db* table will be dropped and a new one is created. This is why any time the app is restarted, the database is reinitialized. The FILE, which is set to point to the 'songs.json' file, is opened and the lines are processed and posted into the database.
 
 ### The different routes
-#### /get_all_songs   (A)
+#### /get_all_songs
 This route will display all the song information saved in the database if it receives a GET request. If a POST request is received, the pagination is altered. With a POST, the PER_PAGE macro (which is initially 10) is set to whatever is received from the 'per' parameter (must be entered as application/json type). This way, if sending a POST request with {"per": 3}, pagination will be set to display 3 results per page.
 
-#### Pagination in /get_all_song/<page_number>   (A)
+#### Pagination in /get_all_song/<page_number>
 The default mode is to display 10 results per page. If the user requests */get_all_songs/1*, they will receive the first ten results. As stated above, the PER_PAGE macro can be altered with a POST request.
 
-#### /get_difficulty_level   (B)
+#### /get_difficulty_level
 This route has two different goals, both work with GET requests. If applied to plainly, a GET from */get_difficulty_level* will display the calculated average difficulty of the songs in the database. With an the parameter 'level'(that is added directly to the end of the address), all songs matching the searched for level will be returned. For example *get_difficulty_level?level=6* returns songs of level 6.
 
-#### /search_songs     (C)
+#### /search_songs
 /search_songs requires a parameter 'message' with the value of what the user wants to search for and returns all the songs that match the message (case insensitively) either by artist name or name of title. The parameter must be added in the GET request to the end of the address. For example, */search_songs?message=you* searches for all the songs that contain *you* either in title or artist names.
 
-#### /add_song_rating    (D)
+#### /add_song_rating
 This route adds a rating to a song. The route only accepts POST requests (which must be of type application/json) and needs the parameters 'song_id' and 'rating'. For example, a application/json POST request to */add_song_rating* with content {"song_id": 1, "rating":4} adds 4.0 to the list of ratings for the document matching the 'song_id'. If the input is invalid, or no document matches the searched for 'song_id', an error response is returned.
 
-#### /get_song_rating    (E)
+#### /get_song_rating
 /get_song_rating returns the average, highest and lowest rating for a searched for 'song_id'. The route works with GET requests and, just like with other GET requests that take input, the parameter must be added to the end of the address. For example, a GET request to */get_song_rating?song_id=1* gives rating results for the song with id number 1.
 
 ## Development ideas and encountered problems
